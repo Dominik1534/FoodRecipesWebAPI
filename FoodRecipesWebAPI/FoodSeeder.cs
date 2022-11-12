@@ -25,6 +25,7 @@ namespace FoodRecipesWebAPI
                     int value = (int)(recipes.Count() * 0.01);
                     foreach (var recipe in recipes)
                     {
+
                         count++;
                         _dbContext.Add(recipe);
                         if (count % value == 0)
@@ -37,25 +38,26 @@ namespace FoodRecipesWebAPI
                         {
                             _dbContext.SaveChanges();
                         }
+
                     }
                 }
                 if (!_dbContext.Reviews.Any())
                 {
-                    var recipes = GetRevievs();
-                    int count = 0;
-                    int count2 = 0;
-                    int value = (int)(recipes.Count() * 0.01);
-                    foreach (var recipe in recipes)
+                    var reviews = GetRevievs();
+                    int Rcount = 0;
+                    int Rcount2 = 0;
+                    int Rvalue = (int)(reviews.Count() * 0.01);
+                    foreach (var reviev in reviews)
                     {
-                        count++;
-                        _dbContext.Add(recipe);
-                        if (count % value == 0)
+                        Rcount++;
+                        _dbContext.Add(reviev);
+                        if (Rcount % Rvalue == 0)
                         {
                             _dbContext.SaveChanges();
-                            count2++;
-                            Console.WriteLine(count2);
+                            Rcount2++;
+                            Console.WriteLine(Rcount2);
                         }
-                        if (recipes.Last() == recipe)
+                        if (reviews.Last() == reviev)
                         {
                             _dbContext.SaveChanges();
                         }
@@ -79,6 +81,7 @@ namespace FoodRecipesWebAPI
 
 
                         ReviewId = record.ReviewId,
+                        RecipeId = record.RecipeId,
                         AuthorId = record.AuthorId,
                         AuthorName = record.AuthorName,
                         Rating = record.Rating,

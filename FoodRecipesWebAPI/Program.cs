@@ -1,6 +1,7 @@
 using FoodRecipesWebAPI.Entities;
 using FoodRecipesWebAPI;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<RecipeDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<FoodSeeder>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
