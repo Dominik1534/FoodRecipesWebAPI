@@ -22,13 +22,7 @@ namespace FoodRecipesWebAPI.Controllers
         }
 
         // GET: api/<RecipeController>
-        [HttpGet]
-        //public IEnumerable<Recipes> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        // GET api/<RecipeController>/5
+   
         [HttpGet("{id}")]
         public ActionResult<RecipeDto> Get([FromRoute]int id)
         {
