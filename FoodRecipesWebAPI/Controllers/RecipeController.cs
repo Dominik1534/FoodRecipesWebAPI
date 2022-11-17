@@ -22,56 +22,45 @@ namespace FoodRecipesWebAPI.Controllers
         }
 
         // GET: api/<RecipeController>
+        [HttpGet()]
+        public IEnumerable<RecipeDto> GetRecipes()
+        {
 
-        //[HttpGet("{id}")]
-        //public ActionResult<RecipeDto> Get([FromRoute] int id)
-        //{    
-        //    var recipeDTO = _recipeServices.GetRecipeByID(id);
-           
-        //    return Ok(recipeDTO);
-        //}
-        [HttpGet("{keyword}")]
+            var recipeDto = _recipeServices.GetRecipes();
+            return recipeDto;
+        }
+        [HttpGet("{id}")]
+        public ActionResult<RecipeDto> GetRecipeById([FromRoute] int id)
+        {
+            var recipeDTO = _recipeServices.GetRecipeByID(id);
+
+            return Ok(recipeDTO);
+        }
+        
+        [HttpGet("keyword/{keyword}")]
         public IEnumerable<RecipeDto> GetRecipeByKeywords(string keyword)
         {
 
-
-            //var recipe = _recipeDbContext
-            //    .Recipes
-            //    .Include(r => r.RecipeInstructions)
-            //    .Include(r => r.RecipeIngredientParts)
-            //    .Include(r => r.RecipeIngredientQuantities)
-            //    .Include(r => r.Images)
-            //    .Include(r => r.Keywords)
-            //    .Where(r => r.Keywords.Any(b => b.Keyword.ToLower() == keyword.ToLower())) 
-            //    .Take(10)
-            //    .ToList();
-
-
-            //if (recipe is null)
-            //{
-            //    return null;
-            //}
-
-            //var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
             var recipeDto = _recipeServices.GetRecipeByKeywords(keyword);
             return recipeDto;
         }
-        // POST api/<RecipeController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+
+
+
+        [HttpGet("ingredient/{ingredient}")]
+        public IEnumerable<RecipeDto> GetRecipeByIngridnient(string ingredient)
         {
+
+            var recipeDto = _recipeServices.GetRecipeByRecipeIngredientParts(ingredient);
+            return recipeDto;
         }
 
-        // PUT api/<RecipeController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpGet("category/{category}")]
+        public IEnumerable<RecipeDto> GetRecipeByCategory(string category)
         {
-        }
 
-        // DELETE api/<RecipeController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var recipeDto = _recipeServices.GetRecipeByRecipeRecipeCategory(category);
+            return recipeDto;
         }
     }
 }

@@ -8,10 +8,12 @@ using System.Linq;
 namespace FoodRecipesWebAPI.Services
 {
     public interface IRecipeServices
-    {
+    { 
+        IEnumerable<RecipeDto> GetRecipes();    
         RecipeDto GetRecipeByID(int id);
         IEnumerable<RecipeDto> GetRecipeByKeywords(string keyword);
-
+        IEnumerable<RecipeDto> GetRecipeByRecipeIngredientParts(string ingredientParts);
+        IEnumerable<RecipeDto> GetRecipeByRecipeRecipeCategory(string recipeCategory);
     }
     public class RecipeServices: IRecipeServices
     {
@@ -25,6 +27,29 @@ namespace FoodRecipesWebAPI.Services
            _recipeDbContext = recipeDbContext;
            _mapper=mapper;
 
+        }
+        public IEnumerable<RecipeDto> GetRecipes()
+        {
+
+
+            var recipe = _recipeDbContext
+                .Recipes
+                .Include(r => r.RecipeInstructions)
+                .Include(r => r.RecipeIngredientParts)
+                .Include(r => r.RecipeIngredientQuantities)
+                .Include(r => r.Images)
+                .Include(r => r.Keywords)               
+                .Take(10)
+                .ToList();
+
+
+            if (recipe is null)
+                throw new NotFoundException("Keyword not found");
+
+
+            var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
+
+            return recipeDto;
         }
         public RecipeDto GetRecipeByID(int id)
         {
@@ -56,6 +81,52 @@ namespace FoodRecipesWebAPI.Services
                 .Include(r => r.Images)
                 .Include(r => r.Keywords)
                 .Where(r => r.Keywords.Any(b => b.Keyword.ToLower() == keyword.ToLower()))
+                .Take(10)
+                .ToList();
+
+
+            if (recipe is null)
+                throw new NotFoundException("Keyword not found");
+
+
+            var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
+
+            return recipeDto;
+        }
+        public IEnumerable<RecipeDto> GetRecipeByRecipeIngredientParts(string ingredientParts)
+        {
+
+            var recipe = _recipeDbContext
+                .Recipes
+                .Include(r => r.RecipeInstructions)
+                .Include(r => r.RecipeIngredientParts)
+                .Include(r => r.RecipeIngredientQuantities)
+                .Include(r => r.Images)
+                .Include(r => r.Keywords)
+                .Where(r => r.RecipeIngredientParts.Any(b => b.RecipeIngredientPart.ToLower() == ingredientParts.ToLower()))
+                .Take(10)
+                .ToList();
+
+
+            if (recipe is null)
+                throw new NotFoundException("Keyword not found");
+
+
+            var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
+
+            return recipeDto;
+        }
+        public IEnumerable<RecipeDto> GetRecipeByRecipeRecipeCategory(string recipeCategory)
+        {
+
+            var recipe = _recipeDbContext
+                .Recipes
+                .Include(r => r.RecipeInstructions)
+                .Include(r => r.RecipeIngredientParts)
+                .Include(r => r.RecipeIngredientQuantities)
+                .Include(r => r.Images)
+                .Include(r => r.Keywords)
+                .Where(r => r.RecipeCategory.ToLower()==recipeCategory.ToLower())
                 .Take(10)
                 .ToList();
 
