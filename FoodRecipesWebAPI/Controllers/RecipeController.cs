@@ -29,14 +29,22 @@ namespace FoodRecipesWebAPI.Controllers
             var recipeDto = _recipeServices.GetRecipes();
             return recipeDto;
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public ActionResult<RecipeDto> GetRecipeById([FromRoute] int id)
         {
             var recipeDTO = _recipeServices.GetRecipeByID(id);
 
             return Ok(recipeDTO);
         }
-        
+
+        [HttpGet("{name:alpha}")]
+        public ActionResult<RecipeDto> GetRecipeById([FromRoute] string name)
+        {
+            var recipeDTO = _recipeServices.GetRecipeByName(name);
+
+            return Ok(recipeDTO);
+        }
+
         [HttpGet("keyword/{keyword}")]
         public IEnumerable<RecipeDto> GetRecipeByKeywords(string keyword)
         {

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.InteropServices;
 using System.Text.Unicode;
+using FoodRecipesWebAPI.Exceptions;
 
 namespace TestsProject
 {

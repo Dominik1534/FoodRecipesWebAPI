@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using FoodRecipesWebAPI.Services;
 using static FoodRecipesWebAPI.Services.RecipeServices;
+using FoodRecipesWebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,9 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped<FoodSeeder>();
 builder.Services.AddScoped<IRecipeServices, RecipeServices>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<RequestTimeMiddleware>();
+
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
@@ -32,7 +36,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestTimeMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

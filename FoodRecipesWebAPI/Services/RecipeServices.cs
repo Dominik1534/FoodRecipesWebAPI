@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoodRecipesWebAPI.Entities;
 using FoodRecipesWebAPI.Exceptions;
+using FoodRecipesWebAPI.Middleware;
 using FoodRecipesWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace FoodRecipesWebAPI.Services
     { 
         IEnumerable<RecipeDto> GetRecipes();    
         RecipeDto GetRecipeByID(int id);
+        RecipeDto GetRecipeByName(string name);
         IEnumerable<RecipeDto> GetRecipeByKeywords(string keyword);
         IEnumerable<RecipeDto> GetRecipeByRecipeIngredientParts(string ingredientParts);
         IEnumerable<RecipeDto> GetRecipeByRecipeRecipeCategory(string recipeCategory);
@@ -19,13 +21,16 @@ namespace FoodRecipesWebAPI.Services
     {
         private readonly RecipeDbContext _recipeDbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<RecipeServices> _logger;
 
-      
 
-        public RecipeServices(RecipeDbContext recipeDbContext, IMapper mapper)
+
+
+        public RecipeServices(RecipeDbContext recipeDbContext, IMapper mapper, ILogger<RecipeServices> logger)
         {
            _recipeDbContext = recipeDbContext;
            _mapper=mapper;
+           _logger= logger;
 
         }
         public IEnumerable<RecipeDto> GetRecipes()
@@ -63,12 +68,31 @@ namespace FoodRecipesWebAPI.Services
                 .FirstOrDefault(r => r.RecipeId == id);
 
             if (recipe is null)
-                throw new NotFoundException("Restaurant not found");
+                throw new NotFoundException("Recipe with that Id not found");
 
             var recipeDto = _mapper.Map<RecipeDto>(recipe);
 
             return recipeDto;
         }
+        public RecipeDto GetRecipeByName(string name)
+        {
+            var recipe = _recipeDbContext
+                .Recipes
+                .Include(r => r.RecipeInstructions)
+                .Include(r => r.RecipeIngredientParts)
+                .Include(r => r.RecipeIngredientQuantities)
+                .Include(r => r.Images)
+                .Include(r => r.Keywords)
+                .FirstOrDefault(r => r.Name == name);
+
+            if (recipe is null)
+                throw new NotFoundException("Recipe with that name not found");
+
+            var recipeDto = _mapper.Map<RecipeDto>(recipe);
+
+            return recipeDto;
+        }
+        
         public IEnumerable<RecipeDto> GetRecipeByKeywords(string keyword)
         {
 
@@ -86,7 +110,7 @@ namespace FoodRecipesWebAPI.Services
 
 
             if (recipe is null)
-                throw new NotFoundException("Keyword not found");
+                throw new NotFoundException("Recipe with that keyword not found");
 
 
             var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
@@ -109,7 +133,7 @@ namespace FoodRecipesWebAPI.Services
 
 
             if (recipe is null)
-                throw new NotFoundException("Keyword not found");
+                throw new NotFoundException("Recipe with that ingredient not found");
 
 
             var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
@@ -132,7 +156,7 @@ namespace FoodRecipesWebAPI.Services
 
 
             if (recipe is null)
-                throw new NotFoundException("Keyword not found");
+                throw new NotFoundException("Recipe with that category not found");
 
 
             var recipeDto = _mapper.Map<List<RecipeDto>>(recipe);
